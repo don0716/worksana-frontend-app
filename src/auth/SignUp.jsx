@@ -1,11 +1,12 @@
 import { useState } from "react"
 import useUser from "../contexts/UserContext"
 import { Link } from "react-router"
+import LoadingUI from "../components/LoadingUI"
 
 const SignUp = () =>{
     const initialFormValue = {name: "", email: "", password: ""}
     const [formData, setFormData] = useState(initialFormValue)
-    const {registerUser} = useUser()
+    const {registerUser, loading, message, error} = useUser()
 
     const inputHandler = (e) => {
         const {name, value} = e.target
@@ -27,12 +28,25 @@ const SignUp = () =>{
             <h2>Register a User</h2>
             <div className="row">
                 <div className="col-md-6">
+
+                    {
+                        loading ? LoadingUI() : (
+                            <div>{error}</div>
+                        )
+                    }
+                    {message && (
+                        <div>
+                            <h4>{message}</h4>
+                        </div>
+                    )}
+
+
                     <form onSubmit={registerHandler}>
                         <label htmlFor="name" className="form-label" >Name:</label>
                         <input className="form-control" type="text" name="name" value={formData.name} onChange={inputHandler} />
                         <label htmlFor="email" className="form-label" >Email:</label>
                         <input type="text" name="email" value={formData.email} onChange={inputHandler} className="form-control" />
-                        <label htmlFor="password" className="form-label" >Name:</label>
+                        <label htmlFor="password" className="form-label" >Password:</label>
                         <input type="text" name="password" value={formData.password} onChange={inputHandler} className="form-control" />
                                 <button type="submit" className="btn btn-primary my-2">
                                 Sign Up

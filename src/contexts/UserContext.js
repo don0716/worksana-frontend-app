@@ -8,6 +8,8 @@ export default useUser;
 export const UserProvider = ({ children }) => {
   const API_URL = process.env.REACT_APP_BACKEND_URL;
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -18,10 +20,14 @@ export const UserProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await axios.get(`${API_URL}/users`);
-      setUsers(res.data.users);
-      console.log(res);
+      if (res.data) {
+        setUsers(res.data.users);
+        setLoading(false);
+        setMessage(res.data.message);
+      }
     } catch (error) {
       setLoading(false);
+      setError(error.message);
     }
   };
 
@@ -32,14 +38,18 @@ export const UserProvider = ({ children }) => {
       console.log(res);
       if (res.data.message === "User Registered") {
         setLoading(false);
+        setMessage(res.data.message);
       }
     } catch (error) {
       setLoading(false);
+      setError(error.message);
     }
   };
 
   return (
-    <UserContext.Provider value={{ users, loading, registerUser }}>
+    <UserContext.Provider
+      value={{ users, loading, registerUser, message, error }}
+    >
       {children}
     </UserContext.Provider>
   );
